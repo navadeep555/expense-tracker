@@ -1,0 +1,14 @@
+{
+  "name": "spendwise-expense-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MERN Expense Tracker - convenience scripts for the client and server folders",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "seed:reset": "npm --prefix server run seed:reset",
+    "build": "npm --prefix client run build"
+  }
+}
