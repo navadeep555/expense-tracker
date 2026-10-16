@@ -5,11 +5,25 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-const origins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
   .split(',')
-  .map((s) => s.trim());
+  .map((s) => s.trim())
+  .filter(Boolean);
 
-app.use(cors({ origin: origins }));
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Render health checks)
+    if (!origin) return callback(null, true);
+    // Allow localhost in dev
+    if (origin.includes('localhost')) return callback(null, true);
+    // Allow all vercel.app domains
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    // Allow explicitly listed origins
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '100kb' }));
 
 app.get('/', (_req, res) => res.json({
